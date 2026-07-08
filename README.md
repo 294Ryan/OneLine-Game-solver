@@ -2,90 +2,90 @@
 
 # **一筆畫遊戲解法器**
 
-## **這是什麼**
-給定一張地圖（2D 網格）與一個起點，用**一條連續路徑**走完所有可走格子，且**每格只能經過一次**。本專案用 DFS + 回溯自動找出這條路徑。
+## **概述**
+給定一張 2D 網格地圖與起點座標，以**單一連續路徑**遍歷所有可走格子，且**每格僅能經過一次**。本專案透過 DFS 回溯搜尋求解此路徑。
 
 - **地圖表示**：二維 list
-  - `0` = 可走格
-  - `-1` = 牆
-  - `1` = 起點（只能有一個）
-- **核心演算法**：DFS 回溯，每步優先嘗試「周圍可走格數最少」的方向（類似 Warnsdorff's rule），減少無效搜尋
-- **剪枝機制**：`checkDead()` 會即時偵測地圖上是否出現「孤島格」（被困死、無法再被走到的格子），一旦出現就提前放棄該分支
+  - `0`：可走格
+  - `-1`：牆
+  - `1`：起點（僅限一個）
+- **搜尋策略**：DFS 回溯，每步優先展開「可行走鄰格數最少」的節點（Warnsdorff's rule 啟發式），降低無效分支比例
+- **剪枝機制**：`checkDead()` 於每步後檢查地圖是否出現不可達格（周圍無可走鄰格），提前終止該分支以避免無謂搜尋
 
 ## **安裝**
-- **需求**：Python 3.x
-- **相依套件**：無，純標準庫
+- **執行環境**：Python 3.x
+- **相依套件**：無，僅使用標準庫
 
 ```bash
 git clone https://github.com/294Ryan/OneLine-Game-solver.git
 ```
 
-## **快速上手**
-1. 打開 `OneLine_game_solver_v5_0.py`，直接修改檔案開頭的 `_map` 變數成你要的地圖
+## **使用方式**
+1. 於 `OneLine_game_solver_v5_0.py` 開頭修改 `_map` 變數以定義目標地圖
 2. 執行：
    ```bash
    python OneLine_game_solver_v5_0.py
    ```
-3. 輸出內容：
-   - 先印出地圖示意圖：`▓` = 牆、`▢` = 路
-   - 有解：印出每格的**走訪順序編號**（1 為起點）
-   - 無解：印出 `The map has no way to finish.`
+3. 輸出：
+   - 地圖視覺化：`▓` 為牆、`▢` 為可走格
+   - 有解時：輸出各格對應的**走訪順序編號**（1 為起點）
+   - 無解時：輸出 `The map has no way to finish.`
 
 ## **常見問題**
-- **跑很久沒反應？**
-  大地圖在最差情況下是指數複雜度。程式每執行 10 萬次 DFS 會印一次進度（`DFS in N times.`），確認是仍在跑而非卡死。
+- **執行時間過長**
+  時間複雜度於最壞情況下呈指數成長，隨地圖規模增加而顯著上升。程式每執行 10 萬次 DFS 呼叫會輸出一次進度（`DFS in N times.`），可用於確認執行狀態。
 
-- **地圖裡可以有多個起點（`1`）嗎？**
-  不行，程式只認**第一個**找到的 `1`，其餘 `1` 不會被特別處理。
+- **地圖中設置多個 `1`**
+  程式僅辨識**第一個**掃描到的 `1` 作為起點，其餘 `1` 不具作用，視同一般座標處理。
 
-- **支援斜向移動嗎？**
-  不支援，`DIRECTIONS` 只定義上下左右四個方向。
+- **對角線移動支援**
+  不支援，`DIRECTIONS` 僅定義上下左右四個方向。
 
-- **為什麼有些明明看起來能走完的地圖卻回報無解？**
-  規則是「每格只能經過一次、且路徑必須連續」，如果地圖形狀導致中途必然產生孤立格（無法再被任何方向走到），就無解——這正是 `checkDead()` 檢查的情況。
+- **視覺上可行的地圖回報無解**
+  規則要求路徑連續且每格僅經過一次；若地圖形狀導致搜尋過程中必然產生不可達格，即為無解，此為 `checkDead()` 檢測的目標情況。
 
 ---
 
 # **OneLine Game Solver**
 
-## **What It Does**
-Given a grid map and a starting point, find **one continuous path** that visits every walkable cell **exactly once**. This project solves it with DFS + backtracking.
+## **Overview**
+Given a 2D grid map and a starting coordinate, traverse every walkable cell via a **single continuous path**, visiting each cell **exactly once**. This project solves the path using DFS with backtracking.
 
-- **Map format**: 2D list
-  - `0` = walkable cell
-  - `-1` = wall
-  - `1` = start point (only one allowed)
-- **Core algorithm**: DFS with backtracking, prioritizing the neighbor with the **fewest available moves** at each step (similar to Warnsdorff's rule) to cut down search space
-- **Pruning**: `checkDead()` detects "dead" cells in real time — cells that become unreachable — and abandons that branch early
+- **Map representation**: 2D list
+  - `0`: walkable cell
+  - `-1`: wall
+  - `1`: start point (exactly one)
+- **Search strategy**: DFS with backtracking; at each step, neighbors with the **fewest reachable cells** are expanded first (Warnsdorff's rule heuristic), reducing invalid branches
+- **Pruning**: `checkDead()` checks after every step for unreachable cells (no walkable neighbors), terminating the branch early to avoid unnecessary search
 
-## **Install**
-- **Requirement**: Python 3.x
+## **Installation**
+- **Runtime**: Python 3.x
 - **Dependencies**: none, standard library only
 
 ```bash
 git clone https://github.com/294Ryan/OneLine-Game-solver.git
 ```
 
-## **Quick Start**
-1. Open `OneLine_game_solver_v5_0.py` and edit the `_map` variable at the top of the file to your target grid
+## **Usage**
+1. Edit the `_map` variable at the top of `OneLine_game_solver_v5_0.py` to define the target grid
 2. Run:
    ```bash
    python OneLine_game_solver_v5_0.py
    ```
 3. Output:
-   - Prints the map first: `▓` = wall, `▢` = road
-   - If solvable: prints each cell's **visit order number** (1 = start)
-   - If not solvable: prints `The map has no way to finish.`
+   - Map visualization: `▓` for wall, `▢` for walkable cell
+   - If solvable: each cell's **visit order number** (1 = start)
+   - If not solvable: `The map has no way to finish.`
 
 ## **FAQ**
-- **It's taking forever — is it stuck?**
-  Worst-case complexity is exponential for large maps. The script prints progress every 100,000 DFS calls (`DFS in N times.`) so you can confirm it's still running.
+- **Execution time is long**
+  Worst-case complexity is exponential and scales sharply with map size. Progress is logged every 100,000 DFS calls (`DFS in N times.`) to confirm the process is still running.
 
-- **Can I have more than one `1` in the map?**
-  No, only the **first** `1` found is used as the start; any others are ignored.
+- **Multiple `1` values in the map**
+  Only the **first** `1` encountered during the scan is used as the start; any subsequent `1` values are treated as ordinary coordinates.
 
-- **Does it support diagonal moves?**
-  No, `DIRECTIONS` only defines up/down/left/right.
+- **Diagonal movement**
+  Not supported. `DIRECTIONS` only defines up, down, left, and right.
 
-- **Why does a map that looks solvable still return no solution?**
-  The rule requires every cell visited exactly once via a continuous path. If the shape forces an unreachable cell mid-solve, it's genuinely unsolvable — that's exactly what `checkDead()` catches.
+- **A visually solvable map reports no solution**
+  The path must be continuous and visit each cell exactly once. If the map's shape forces an unreachable cell during search, it is genuinely unsolvable — this is the exact condition `checkDead()` detects.
